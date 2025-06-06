@@ -1,5 +1,6 @@
 import React, { useContext, type ChangeEvent } from "react";
 import { LangContext } from '../App';
+import { useTranslation } from 'react-i18next'
 
 type Props = {
   value: string;
@@ -23,7 +24,9 @@ export default function Input(props: Props): React.ReactNode {
     return float;
   }
 
- const lang = useContext(LangContext);
+
+  const lang = useContext(LangContext);
+  const { t, i18n } = useTranslation();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const v = e.currentTarget.value;
@@ -60,8 +63,8 @@ export default function Input(props: Props): React.ReactNode {
         props.type === 'metric' ?
         <label>
           <select value={props.metricValue} onChange={(e) => props.setMetric ? props.setMetric(e.currentTarget.value) : null}>
-            <option value="months">months</option>
-            <option value="years">years</option>
+            <option value="months">{t('months')}</option>
+            <option value="years">{t('years')}</option>
           </select>
           <span>{props.metricLabel}</span>
         </label> :
