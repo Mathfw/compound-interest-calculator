@@ -1,5 +1,9 @@
-import React, { createContext, useEffect, useState, type Dispatch, type FormEvent, type SetStateAction } from 'react'
+import React, { createContext, useState, type Dispatch, type FormEvent, type SetStateAction } from 'react'
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer, type TooltipProps } from 'recharts'
+import { useTranslation } from 'react-i18next'
+
 import Input from './components/Input'
+
 import FlagUS from './assets/flag-US.svg?react'
 import FlagBR from './assets/flag-BR.svg?react'
 
@@ -7,7 +11,7 @@ export const LangContext = createContext<{
   value: string,
   setValue: Dispatch<SetStateAction<string>>
 }>({
-  value: 'pt-BR',
+  value: 'en-US',
   setValue: () => {}
 });
 
@@ -21,13 +25,10 @@ function App(): React.ReactNode {
   const [interestMetric, setInterestMetric] = useState<'months'|'years'>('months');
   const [periodMetric, setPeriodMetric] = useState<'months'|'years'>('months');
 
-  const [out, setOut] = useState<{interest: number, gross: number, total: number}[]>([]);
+  const [outTable, setOutTable] = useState<{earnings: number, invested: number, tottalEarnings: number,  total: number}[] | null>(null);
+  const [outChart, setOutChart] = useState<{earnings: string, invested: string, gross: string, month: string}[] | null>(null);
 
-  const [lang, setLang] = useState('pt-BR');
-
-  useEffect(() => {
-    console.log(out);
-  }, [out])
+  const [lang, setLang] = useState('en-US');
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -52,68 +53,140 @@ function App(): React.ReactNode {
         parseFloat(interest.replace(',', '')) / 100;
       calc.period = periodMetric === 'years' ? Math.floor(parseInt(period) * 12) : parseInt(period);
     } 
-    console.log(calc);
-    let outTemp: {interest: number, gross: number, total: number}[] = [];
-    let total = 0, gross = calc.start;
+    let outTableTemp: {earnings: number, invested: number, tottalEarnings: number,  total: number}[] = [];
+    let outChartTemp: {earnings: string, invested: string, gross: string, month: string}[] = []; 
+    let total = 0, invested = calc.start, totalEarnings = 0;
     for (let i = 0; i < calc.period; i++) {
-      calc.start += calc.monthly;
-      gross += calc.monthly;
       total = calc.start * Math.pow(1+calc.interest, 1);
-      outTemp.push({
-        interest: total - calc.start, 
-        gross: gross, 
+      totalEarnings += total - calc.start >= 0 ? total - calc.start : 0;
+      outTableTemp.push({
+        earnings: total - calc.start >= 0 ? total - calc.start : 0, 
+        invested: invested, 
+        tottalEarnings: totalEarnings,
         total: total
       })
-      calc.start = total
+      outChartTemp.push({
+        earnings: totalEarnings.toFixed(2),
+        invested: invested.toFixed(2),
+        gross: total.toFixed(2),
+        month: i.toString()
+      })
+      calc.start = total;
+      calc.start += calc.monthly;
+      invested += calc.monthly;
     }
-    console.log(outTemp);
-    setOut(outTemp);
+    setOutTable(outTableTemp);
+    setOutChart(outChartTemp);
   }
+
+  const CustomTooltip: React.FC<TooltipProps<number, string>> = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      const posInvested = payload.find(p => p.dataKey === 'invested')?.value ?? 0;
+      const posOffset = payload.find(p => p.dataKey === 'gross')?.value ?? 0;
+      const difference = posOffset - posInvested;
+
+      return (
+        <div style={{ background: 'rgba(255,255,255,0.9)', border: '1px solid #ccc', padding: '8px' }}>
+          <p><strong>month:</strong> {label}</p>
+          <p><strong>invested:</strong> USD: {posInvested.toLocaleString(lang)}</p>
+          <p><strong>earnings:</strong> USD: {difference.toLocaleString(lang)}</p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const { t, i18n } = useTranslation();
+
+  const changeLanguage = (lng: string) => i18n.changeLanguage(lng);
 
   return (
     <main>
       <LangContext value={{value: lang, setValue: setLang}}>
-        <h1>compound interest calculator</h1>
-        <button onClick={() => setLang('pt-BR')} style={{ width: '4em', height: '4em' }}>
+        <h1>{t('compound_interest_calculator')}</h1>
+        <button onClick={() => {
+            changeLanguage('pt');
+            setLang('pt-BR');
+          }} style={{ width: '4em', height: '4em' }}>
           <FlagBR />
         </button>
-        <button onClick={() => setLang('en-US')} style={{ width: '4em', height: '4em' }}>
+        <button onClick={() => { 
+            changeLanguage('en');
+            setLang('en-US');
+          }} style={{ width: '4em', height: '4em' }}>
           <FlagUS />
         </button>
         <form onSubmit={handleSubmit}>
           <Input value={start} type='money' setValue={(v) => setStart(v)} >
-            start investment value
+             {t('start_investment_value')}
           </Input>
           <Input value={monthly} type='money' setValue={(v) => setMonthly(v)} >
-            monthly investment value
+            {t('monthly_investment_value')}
           </Input>
-          <Input value={interest} type='metric' setValue={(v) => setInterest(v)} metricLabel='in' metricValue={interestMetric} 
+          <Input value={interest} type='metric' setValue={(v) => setInterest(v)} metricLabel={t('__in__')} metricValue={interestMetric} 
             setMetric={(v) => {
               if (v === 'months' || v === 'years') {
                 setInterestMetric(v)
               }
             }}>
-              interest rate
+              {t('interest_rate')}
           </Input>
-          <Input value={period} type='metric' setValue={(v) => setPeriod(v)} metricLabel='in' metricValue={periodMetric} 
+          <Input value={period} type='metric' setValue={(v) => setPeriod(v)} metricLabel={t('__in__')} metricValue={periodMetric} 
             setMetric={(v) => {
               if (v === 'months' || v === 'years') {
                 setPeriodMetric(v)
               }
             }} >
-            period of the investment
+              {t('period_of_the_investment')}
           </Input>
           <button type='submit'>
-            calculate
+            {t('calculate')}
           </button>
         </form>
         {
-          out ?
-          out.map((v, index) => {
-            return(
-              <p key={index}>interest: {v.interest.toFixed(2)}, gross: {v.gross.toFixed(2)}, total: {v.total.toFixed(2)}</p>
-            )
-          }) :
+          outChart ?
+          <div style={{ width: '600px', height: '400px' }}>
+            <ResponsiveContainer width='100%' height='100%'>
+                <LineChart data={outChart}>
+                  <Line type='monotone' dataKey='gross' stroke='#ff0000' />
+                  <Line type='monotone' dataKey='invested' stroke='#00ff00' />
+                  <CartesianGrid strokeDasharray='5 5' />
+                  <YAxis domain={[0, parseFloat(outChart[outChart.length - 1].gross)]} />
+                  <XAxis dataKey='month' />
+                  <Tooltip content={<CustomTooltip/>}/>
+                </LineChart>
+            </ResponsiveContainer> 
+          </div>:
+          null
+        }
+        {
+          outTable ?
+          <table>
+            <thead>
+              <tr>
+                <th>{t('month')}</th>
+                <th>{t('monthly_earnings')}</th>
+                <th>{t('total_invested')}</th>
+                <th>{t('total_earnings')}</th>
+                <th>{t('total_Accumulated')}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                outTable.map((v, index) => {
+                  return(
+                    <tr key={index}>
+                      <td>{index}</td>
+                      <td>{v.earnings.toFixed(2)}</td>
+                      <td>{v.invested.toFixed(2)}</td>
+                      <td>{v.tottalEarnings.toFixed(2)}</td>
+                      <td>{v.total.toFixed(2)}</td>
+                    </tr>
+                  )
+                })
+              }
+            </tbody>
+          </table> :
           null
         }
       </LangContext>
