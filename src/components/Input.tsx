@@ -1,3 +1,5 @@
+import './input.css';
+
 import React, { useContext, type ChangeEvent } from "react";
 import { LangContext } from '../App';
 import { useTranslation } from 'react-i18next'
