@@ -1,6 +1,16 @@
 {
-  "start investment value": "",
-  "monthly investment value": "",
-  "interest rate": "",
-  "period of the investment": ""
+  "compound_interest_calculator": "calculadora de juros composto",
+  "start_investment_value": "valor do investimento inicial",
+  "monthly_investment_value": "valor do aporte mensal",
+  "interest_rate": "taxa de juros",
+  "period_of_the_investment": "periodo do investimento",
+  "calculate": "calcular",
+  "month": "mês",
+  "monthly_earnings": "ganhos mensais",
+  "total_invested": "total investido",
+  "total_earnings": "total de ganhos",
+  "total_Accumulated": "total acumulado",
+  "__in__": "em",
+  "months": "meses",
+  "years": "anos"
 }

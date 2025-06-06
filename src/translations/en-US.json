@@ -1,3 +1,16 @@
 {
-
+  "compound_interest_calculator": "compound interest calculator",
+  "start_investment_value": "start investment value",
+  "monthly_investment_value": "monthly investment value",
+  "interest_rate": "interest rate",
+  "period_of_the_investment": "period of the investment",
+  "calculate": "calculate",
+  "month": "month",
+  "monthly_earnings": "monthly earnings",
+  "total_invested": "total invested",
+  "total_earnings": "total earnings",
+  "total_Accumulated": "total Accumulated",
+  "__in__": "in",
+  "months": "months",
+  "years": "years"
 }
