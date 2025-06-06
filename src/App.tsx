@@ -1,5 +1,7 @@
+import './App.css';
+
 import React, { createContext, useState, type Dispatch, type FormEvent, type SetStateAction } from 'react'
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer, type TooltipProps } from 'recharts'
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer, type TooltipProps, Legend, type LegendProps } from 'recharts'
 import { useTranslation } from 'react-i18next'
 
 import Input from './components/Input'
@@ -96,6 +98,22 @@ function App(): React.ReactNode {
     return null;
   };
 
+  const CustomLegend: React.FC<LegendProps> = ({ payload }) => {
+    return (
+      <ul style={{display: 'flex', width: 'full', alignItems: 'center', justifyContent: 'center', gap: '1.5em'}}>
+        {
+          payload?.map((v, i) => {
+            if (v.value === 'gross') {
+              return <li key={i}>{t('earnings')}</li>
+            } else if (v.value === 'invested') {
+              return <li key={i}>{t('invested')}</li>
+            }
+          })
+        }
+      </ul>
+    )
+  }
+
   const { t, i18n } = useTranslation();
 
   const changeLanguage = (lng: string) => i18n.changeLanguage(lng);
@@ -154,6 +172,7 @@ function App(): React.ReactNode {
                   <YAxis domain={[0, parseFloat(outChart[outChart.length - 1].gross)]} />
                   <XAxis dataKey='month' />
                   <Tooltip content={<CustomTooltip/>}/>
+                  <Legend verticalAlign='top' height={36} content={<CustomLegend/>} />
                 </LineChart>
             </ResponsiveContainer> 
           </div>:
