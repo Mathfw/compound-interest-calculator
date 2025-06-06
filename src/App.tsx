@@ -1,10 +1,12 @@
 import './App.css';
 
 import React, { createContext, useState, type Dispatch, type FormEvent, type SetStateAction } from 'react'
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer, type TooltipProps, Legend, type LegendProps } from 'recharts'
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 import { useTranslation } from 'react-i18next'
 
 import Input from './components/Input'
+import { CustomLegend } from './components/CustomLegend';
+import { CustomTooltip } from './components/CustomTooltip';
 
 import FlagUS from './assets/flag-US.svg?react'
 import FlagBR from './assets/flag-BR.svg?react'
@@ -79,39 +81,6 @@ function App(): React.ReactNode {
     }
     setOutTable(outTableTemp);
     setOutChart(outChartTemp);
-  }
-
-  const CustomTooltip: React.FC<TooltipProps<number, string>> = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
-      const posInvested = payload.find(p => p.dataKey === 'invested')?.value ?? 0;
-      const posOffset = payload.find(p => p.dataKey === 'gross')?.value ?? 0;
-      const difference = posOffset - posInvested;
-
-      return (
-        <div style={{ background: 'rgba(255,255,255,0.9)', border: '1px solid #ccc', padding: '8px' }}>
-          <p><strong>month:</strong> {label}</p>
-          <p><strong>invested:</strong> USD: {posInvested.toLocaleString(lang)}</p>
-          <p><strong>earnings:</strong> USD: {difference.toLocaleString(lang)}</p>
-        </div>
-      );
-    }
-    return null;
-  };
-
-  const CustomLegend: React.FC<LegendProps> = ({ payload }) => {
-    return (
-      <ul style={{display: 'flex', width: 'full', alignItems: 'center', justifyContent: 'center', gap: '1.5em'}}>
-        {
-          payload?.map((v, i) => {
-            if (v.value === 'gross') {
-              return <li key={i}>{t('earnings')}</li>
-            } else if (v.value === 'invested') {
-              return <li key={i}>{t('invested')}</li>
-            }
-          })
-        }
-      </ul>
-    )
   }
 
   const { t, i18n } = useTranslation();
