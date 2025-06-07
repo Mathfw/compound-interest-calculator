@@ -1,6 +1,6 @@
 import './App.css';
 
-import React, { createContext, useState, type Dispatch, type FormEvent, type SetStateAction } from 'react'
+import React, { useState, type FormEvent } from 'react'
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 import { useTranslation } from 'react-i18next'
 
@@ -8,16 +8,13 @@ import Input from './components/Input'
 import { CustomLegend } from './components/CustomLegend';
 import { CustomTooltip } from './components/CustomTooltip';
 
+import { LangContext } from './contexts/LangContext';
+import { ThemeContext } from './contexts/ThemeContext';
+
 import FlagUS from './assets/flag-US.svg?react'
 import FlagBR from './assets/flag-BR.svg?react'
-
-export const LangContext = createContext<{
-  value: string,
-  setValue: Dispatch<SetStateAction<string>>
-}>({
-  value: 'en-US',
-  setValue: () => {}
-});
+import Moon from './assets/moon.svg?react'
+import Sun from './assets/sun.svg?react'
 
 function App(): React.ReactNode {
 
@@ -33,6 +30,8 @@ function App(): React.ReactNode {
   const [outChart, setOutChart] = useState<{earnings: string, invested: string, gross: string, month: string}[] | null>(null);
 
   const [lang, setLang] = useState('en-US');
+
+  const [theme, setTheme] = useState('light');
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -88,97 +87,102 @@ function App(): React.ReactNode {
   const changeLanguage = (lng: string) => i18n.changeLanguage(lng);
 
   return (
-    <main>
-      <LangContext value={{value: lang, setValue: setLang}}>
-        <h1>{t('compound_interest_calculator')}</h1>
-        <button onClick={() => {
-            changeLanguage('pt');
-            setLang('pt-BR');
-          }} style={{ width: '4em', height: '4em' }}>
-          <FlagBR />
-        </button>
-        <button onClick={() => { 
-            changeLanguage('en');
-            setLang('en-US');
-          }} style={{ width: '4em', height: '4em' }}>
-          <FlagUS />
-        </button>
-        <form onSubmit={handleSubmit}>
-          <Input value={start} type='money' setValue={(v) => setStart(v)} >
-             {t('start_investment_value')}
-          </Input>
-          <Input value={monthly} type='money' setValue={(v) => setMonthly(v)} >
-            {t('monthly_investment_value')}
-          </Input>
-          <Input value={interest} type='metric' setValue={(v) => setInterest(v)} metricLabel={t('__in__')} metricValue={interestMetric} 
-            setMetric={(v) => {
-              if (v === 'months' || v === 'years') {
-                setInterestMetric(v)
-              }
+    <LangContext value={{value: lang, setValue: setLang}}>
+      <ThemeContext value={{value: theme, setValue: setTheme}}>
+        <main className={`container ${theme}`}>
+          <h1 className='title'>{t('compound_interest_calculator')}</h1>
+          <button className='button button--icon button--outlined' onClick={() => {
+              changeLanguage('pt');
+              setLang('pt-BR');
             }}>
-              {t('interest_rate')}
-          </Input>
-          <Input value={period} type='metric' setValue={(v) => setPeriod(v)} metricLabel={t('__in__')} metricValue={periodMetric} 
-            setMetric={(v) => {
-              if (v === 'months' || v === 'years') {
-                setPeriodMetric(v)
-              }
-            }} >
-              {t('period_of_the_investment')}
-          </Input>
-          <button type='submit'>
-            {t('calculate')}
+            <FlagBR />
           </button>
-        </form>
-        {
-          outChart ?
-          <div style={{ width: '600px', height: '400px' }}>
-            <ResponsiveContainer width='100%' height='100%'>
-                <LineChart data={outChart}>
-                  <Line type='monotone' dataKey='gross' stroke='#ff0000' />
-                  <Line type='monotone' dataKey='invested' stroke='#00ff00' />
-                  <CartesianGrid strokeDasharray='5 5' />
-                  <YAxis domain={[0, parseFloat(outChart[outChart.length - 1].gross)]} />
-                  <XAxis dataKey='month' />
-                  <Tooltip content={<CustomTooltip/>}/>
-                  <Legend verticalAlign='top' height={36} content={<CustomLegend/>} />
-                </LineChart>
-            </ResponsiveContainer> 
-          </div>:
-          null
-        }
-        {
-          outTable ?
-          <table>
-            <thead>
-              <tr>
-                <th>{t('month')}</th>
-                <th>{t('monthly_earnings')}</th>
-                <th>{t('total_invested')}</th>
-                <th>{t('total_earnings')}</th>
-                <th>{t('total_Accumulated')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {
-                outTable.map((v, index) => {
-                  return(
-                    <tr key={index}>
-                      <td>{index}</td>
-                      <td>{v.earnings.toFixed(2)}</td>
-                      <td>{v.invested.toFixed(2)}</td>
-                      <td>{v.tottalEarnings.toFixed(2)}</td>
-                      <td>{v.total.toFixed(2)}</td>
-                    </tr>
-                  )
-                })
-              }
-            </tbody>
-          </table> :
-          null
-        }
-      </LangContext>
-    </main>
+          <button className='button button--icon button--outlined' onClick={() => { 
+              changeLanguage('en');
+              setLang('en-US');
+            }}>
+            <FlagUS />
+          </button>
+          <button className='button button--icon button--outlined' onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
+            { theme === 'light' ? <Moon /> : <Sun /> }
+          </button>
+          <form onSubmit={handleSubmit} className='form'>
+            <Input value={start} type='money' setValue={(v) => setStart(v)} >
+              {t('start_investment_value')}
+            </Input>
+            <Input value={monthly} type='money' setValue={(v) => setMonthly(v)} >
+              {t('monthly_investment_value')}
+            </Input>
+            <Input value={interest} type='metric' setValue={(v) => setInterest(v)} metricLabel={t('__in__')} metricValue={interestMetric} 
+              setMetric={(v) => {
+                if (v === 'months' || v === 'years') {
+                  setInterestMetric(v)
+                }
+              }}>
+                {t('interest_rate')}
+            </Input>
+            <Input value={period} type='metric' setValue={(v) => setPeriod(v)} metricLabel={t('__in__')} metricValue={periodMetric} 
+              setMetric={(v) => {
+                if (v === 'months' || v === 'years') {
+                  setPeriodMetric(v)
+                }
+              }} >
+                {t('period_of_the_investment')}
+            </Input>
+            <button className='button button--primary' type='submit'>
+              {t('calculate')}
+            </button>
+          </form>
+          {
+            outChart ?
+            <div className='chart'>
+              <ResponsiveContainer width='100%' height='100%'>
+                  <LineChart data={outChart}>
+                    <Line type='monotone' dataKey='gross' stroke='#ff0000' />
+                    <Line type='monotone' dataKey='invested' stroke='#00ff00' />
+                    <CartesianGrid strokeDasharray='5 5' />
+                    <YAxis domain={[0, parseFloat(outChart[outChart.length - 1].gross)]} />
+                    <XAxis dataKey='month' />
+                    <Tooltip content={<CustomTooltip/>}/>
+                    <Legend verticalAlign='top' height={36} content={<CustomLegend/>} />
+                  </LineChart>
+              </ResponsiveContainer> 
+            </div>:
+            null
+          }
+          {
+            outTable ?
+            <table className='table'>
+              <thead className='table__head'>
+                <tr className='table__row'>
+                  <th className='table__field'>{t('month')}</th>
+                  <th>{t('monthly_earnings')}</th>
+                  <th>{t('total_invested')}</th>
+                  <th>{t('total_earnings')}</th>
+                  <th>{t('total_Accumulated')}</th>
+                </tr>
+              </thead>
+              <tbody className='table__body'>
+                {
+                  outTable.map((v, index) => {
+                    return(
+                      <tr key={index} className='table__row'>
+                        <td className='table__field'>{index}</td>
+                        <td className='table__field'>{v.earnings.toFixed(2)}</td>
+                        <td className='table__field'>{v.invested.toFixed(2)}</td>
+                        <td className='table__field'>{v.tottalEarnings.toFixed(2)}</td>
+                        <td className='table__field'>{v.total.toFixed(2)}</td>
+                      </tr>
+                    )
+                  })
+                }
+              </tbody>
+            </table> :
+            null
+          }
+        </main>
+      </ThemeContext>
+    </LangContext>
   )
 }
 
