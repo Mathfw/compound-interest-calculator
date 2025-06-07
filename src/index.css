@@ -1,1 +1,41 @@
+:root {
+  --xanthous-50: #fffaeb;
+  --xanthous-100: #fdefc8;
+  --xanthous-200: #fbdf8c;
+  --xanthous-300: #f9c850;
+  --xanthous-400: #f7b32b;
+  --xanthous-500: #f1910f;
+  --xanthous-600: #d56c0a;
+  --xanthous-700: #b14a0c;
+  --xanthous-800: #8f3a11;
+  --xanthous-900: #763111;
+  --xanthous-950: #441704;
 
+  --night-50: #f8f7f8;
+  --night-100: #f0eeef;
+  --night-200: #ded9dc;
+  --night-300: #c1b8bd;
+  --night-400: #9f919a;
+  --night-500: #83747c;
+  --night-600: #6b5e66;
+  --night-700: #574d53;
+  --night-800: #4a4246;
+  --night-900: #403a3d;
+  --night-950: #131112;
+}
+
+.light {
+  --text: var(--night-900);
+  --background: var(--night-100);
+  --primary: var(--xanthous-400);
+  --secondary: var(--xanthous-100);
+  --accent: var(--xanthous-600);
+}
+
+.dark {
+  --text: var(--night-100);
+  --background: var(--night-900);
+  --primary: var(--xanthous-500);
+  --secondary: var(--xanthous-300);
+  --accent: var(--xanthous-800);
+}
