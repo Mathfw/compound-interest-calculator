@@ -28,7 +28,7 @@ export default function Input(props: Props): React.ReactNode {
 
 
   const lang = useContext(LangContext);
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const v = e.currentTarget.value;
