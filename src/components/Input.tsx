@@ -1,7 +1,7 @@
 import './input.css';
 
 import React, { useContext, type ChangeEvent } from "react";
-import { LangContext } from '../App';
+import { LangContext } from '../contexts/LangContext';
 import { useTranslation } from 'react-i18next'
 
 type Props = {
