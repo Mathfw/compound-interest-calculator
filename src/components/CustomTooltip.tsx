@@ -1,5 +1,7 @@
+import './CustomTooltip.css';
+
 import { useContext } from "react";
-import { LangContext } from "../App";
+import { LangContext } from "../contexts/LangContext";
 import type { TooltipProps } from "recharts";
 
 export const CustomTooltip: React.FC<TooltipProps<number, string>> = ({ active, payload, label }) => {
@@ -12,10 +14,10 @@ export const CustomTooltip: React.FC<TooltipProps<number, string>> = ({ active, 
     const difference = posOffset - posInvested;
 
     return (
-      <div style={{ background: 'rgba(255,255,255,0.9)', border: '1px solid #ccc', padding: '8px' }}>
-        <p><strong>month:</strong> {label}</p>
-        <p><strong>invested:</strong> USD: {posInvested.toLocaleString(lang.value)}</p>
-        <p><strong>earnings:</strong> USD: {difference.toLocaleString(lang.value)}</p>
+      <div className='tooltip'>
+        <p className='tooltip__label'><strong>month:</strong> {label}</p>
+        <p className='tooltip__label'><strong>invested:</strong> USD: {posInvested.toLocaleString(lang.value)}</p>
+        <p className='tooltip__label'><strong>earnings:</strong> USD: {difference.toLocaleString(lang.value)}</p>
       </div>
     );
   }
