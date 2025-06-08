@@ -1,11 +1,14 @@
-import React, { useEffect, useRef, useState } from "react";
+import './Select.css';
 
-import DonwArrow from '../assets/down-arrow.svg?react'
+import React, { useEffect, useRef, useState } from "react";
+import { useTranslation } from 'react-i18next';
+
+import DonwArrow from '../assets/down-arrow.svg?react';
 
 type Props = {
   placeholder: string;
   options: string[];
-  onChange: (value: string) => void;
+  onChange?: (value: string) => void;
 }
 
 export default function Select(props: Props): React.ReactNode {
@@ -21,9 +24,9 @@ export default function Select(props: Props): React.ReactNode {
         setOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('click', handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('click', handleClickOutside);
     }
   }, [])
 
@@ -35,23 +38,27 @@ export default function Select(props: Props): React.ReactNode {
     if (props.onChange) props.onChange(option);
   };
 
+  const { t } = useTranslation();
+
   return (
-    <div ref={containerRef}>
+    <div ref={containerRef} className='select'>
       <button
-        type="button"
+        type='button'
         onClick={toggleSelect}
+        className="trigger"
       >
-        <span>{ props.placeholder || selected }</span>
-        <DonwArrow />
+        <span className="trigger__content">{ t(selected) || props.placeholder }</span>
+        <span className="trigger__icon"><DonwArrow /></span>
       </button>
       {
         open ?
-        <ul>
+        <ul className="list">
           {
             props.options.map((option, i) => {
               return (
-                <li key={i} onClick={() => handleOptionClick(option)}>
-                  {option}
+                <li key={i} onClick={() => handleOptionClick(option)}
+                className="list__item">
+                  {t(option)}
                 </li>
               )
             })

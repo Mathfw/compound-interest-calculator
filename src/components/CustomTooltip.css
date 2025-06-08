@@ -1,3 +1,10 @@
-.tooltip {}
+.tooltip {
+  background-color: var(--background);
+  padding: 1em;
+  border: 1px solid var(--text);
+  border-radius: var(--rounded-md);
+}
 
-.tooltip__label {}
+.tooltip__label {
+  text-transform: capitalize;
+}

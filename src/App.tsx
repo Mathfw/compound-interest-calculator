@@ -15,6 +15,7 @@ import FlagUS from './assets/flag-US.svg?react'
 import FlagBR from './assets/flag-BR.svg?react'
 import Moon from './assets/moon.svg?react'
 import Sun from './assets/sun.svg?react'
+import Select from './components/Select';
 
 function App(): React.ReactNode {
 
@@ -23,8 +24,8 @@ function App(): React.ReactNode {
   const [interest, setInterest] = useState('');
   const [period, setPeriod] = useState('');
 
-  const [interestMetric, setInterestMetric] = useState<'months'|'years'>('months');
-  const [periodMetric, setPeriodMetric] = useState<'months'|'years'>('months');
+  const [interestMetric, setInterestMetric] = useState<'months'|'years'|''>('');
+  const [periodMetric, setPeriodMetric] = useState<'months'|'years'|''>('');
 
   const [outTable, setOutTable] = useState<{earnings: number, invested: number, tottalEarnings: number,  total: number}[] | null>(null);
   const [outChart, setOutChart] = useState<{earnings: string, invested: string, gross: string, month: string}[] | null>(null);
@@ -56,6 +57,7 @@ function App(): React.ReactNode {
         parseFloat(interest.replace(',', '')) / 100;
       calc.period = periodMetric === 'years' ? Math.floor(parseInt(period) * 12) : parseInt(period);
     } 
+    console.log(calc);
     let outTableTemp: {earnings: number, invested: number, tottalEarnings: number,  total: number}[] = [];
     let outChartTemp: {earnings: string, invested: string, gross: string, month: string}[] = []; 
     let total = 0, invested = calc.start, totalEarnings = 0;
@@ -89,47 +91,70 @@ function App(): React.ReactNode {
   return (
     <LangContext value={{value: lang, setValue: setLang}}>
       <ThemeContext value={{value: theme, setValue: setTheme}}>
-        <main className={`container ${theme}`}>
-          <h1 className='title'>{t('compound_interest_calculator')}</h1>
-          <button className='button button--icon button--outlined' onClick={() => {
-              changeLanguage('pt');
-              setLang('pt-BR');
-            }}>
-            <FlagBR />
-          </button>
-          <button className='button button--icon button--outlined' onClick={() => { 
-              changeLanguage('en');
-              setLang('en-US');
-            }}>
-            <FlagUS />
-          </button>
-          <button className='button button--icon button--outlined' onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
+        <header className={`header ${theme}`}>
+          <h1 className='header__title'>{t('compound_interest_calculator')}</h1>
+          <div className='header__flags'>
+            <button className='button button--icon button--outlined button--flag' onClick={() => {
+                changeLanguage('pt');
+                setLang('pt-BR');
+              }}>
+              <FlagBR />
+            </button>
+            <button className='button button--icon button--outlined button--flag' onClick={() => { 
+                changeLanguage('en');
+                setLang('en-US');
+              }}>
+              <FlagUS />
+            </button>
+          </div>
+          <button className='button button--icon button--outlined button--theme' onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
             { theme === 'light' ? <Moon /> : <Sun /> }
           </button>
+        </header>
+        <main className={`container ${theme}`}>
           <form onSubmit={handleSubmit} className='form'>
-            <Input value={start} type='money' setValue={(v) => setStart(v)} >
-              {t('start_investment_value')}
-            </Input>
-            <Input value={monthly} type='money' setValue={(v) => setMonthly(v)} >
-              {t('monthly_investment_value')}
-            </Input>
-            <Input value={interest} type='metric' setValue={(v) => setInterest(v)} metricLabel={t('__in__')} metricValue={interestMetric} 
-              setMetric={(v) => {
-                if (v === 'months' || v === 'years') {
-                  setInterestMetric(v)
-                }
-              }}>
-                {t('interest_rate')}
-            </Input>
-            <Input value={period} type='metric' setValue={(v) => setPeriod(v)} metricLabel={t('__in__')} metricValue={periodMetric} 
-              setMetric={(v) => {
-                if (v === 'months' || v === 'years') {
-                  setPeriodMetric(v)
-                }
-              }} >
-                {t('period_of_the_investment')}
-            </Input>
-            <button className='button button--primary' type='submit'>
+            <div className='form__field'>
+              <Input value={start} type='money' setValue={(v) => setStart(v)} pattern='[0-9,.]+' required={true}>
+                {t('start_investment_value')}
+              </Input>
+            </div>
+            <div className='form__field'>
+              <Input value={monthly} type='money' setValue={(v) => setMonthly(v)} pattern='[0-9,.]+' required={true}>
+                {t('monthly_investment_value')}
+              </Input>
+            </div>
+            <div className='form__field'>
+              <Input value={interest} type='money' setValue={(v) => setInterest(v)} pattern='[0-9,.]+' required={true}>
+                  {t('interest_rate')}
+              </Input>
+              <span className='form__field__separator'>{t('__in__')}</span>
+              <Select 
+                placeholder='select interest'
+                options={['months', 'years']}
+                onChange={(option) => {
+                  if (option === 'months' || option === 'years') {
+                    setInterestMetric(option)
+                  }
+                }}
+              />
+            </div>
+            <div className='form__field'>
+              <Input value={period} type='text' setValue={(v) => setPeriod(v)} pattern='[0-9,.]+' required={true}>
+                  {t('period_of_the_investment')}
+              </Input>
+              <span className='form__field__separator'>{t('__in__')}</span>
+              <Select 
+                placeholder='select pediod'
+                options={['months', 'years']}
+                onChange={(option) => {
+                  if (option === 'months' || option === 'years') {
+                    setPeriodMetric(option)
+                  }
+                }}
+              />
+            </div>
+
+            <button className='form__buttton button button--primary' type='submit'>
               {t('calculate')}
             </button>
           </form>
@@ -152,32 +177,34 @@ function App(): React.ReactNode {
           }
           {
             outTable ?
-            <table className='table'>
-              <thead className='table__head'>
-                <tr className='table__row'>
-                  <th className='table__field'>{t('month')}</th>
-                  <th>{t('monthly_earnings')}</th>
-                  <th>{t('total_invested')}</th>
-                  <th>{t('total_earnings')}</th>
-                  <th>{t('total_Accumulated')}</th>
-                </tr>
-              </thead>
-              <tbody className='table__body'>
-                {
-                  outTable.map((v, index) => {
-                    return(
-                      <tr key={index} className='table__row'>
-                        <td className='table__field'>{index}</td>
-                        <td className='table__field'>{v.earnings.toFixed(2)}</td>
-                        <td className='table__field'>{v.invested.toFixed(2)}</td>
-                        <td className='table__field'>{v.tottalEarnings.toFixed(2)}</td>
-                        <td className='table__field'>{v.total.toFixed(2)}</td>
-                      </tr>
-                    )
-                  })
-                }
-              </tbody>
-            </table> :
+            <div className='table-container'>
+              <table className='table'>
+                <thead>
+                  <tr className='table__row'>
+                    <th className='table__head__field'>{t('month')}</th>
+                    <th className='table__head__field'>{t('monthly_earnings')}</th>
+                    <th className='table__head__field'>{t('total_invested')}</th>
+                    <th className='table__head__field'>{t('total_earnings')}</th>
+                    <th className='table__head__field'>{t('total_Accumulated')}</th>
+                  </tr>
+                </thead>
+                <tbody className='table__body'>
+                  {
+                    outTable.map((v, index) => {
+                      return(
+                        <tr key={index} className='table__row'>
+                          <td className='table__body__field'>{index}</td>
+                          <td className='table__body__field'>{v.earnings.toFixed(2)}</td>
+                          <td className='table__body__field'>{v.invested.toFixed(2)}</td>
+                          <td className='table__body__field'>{v.tottalEarnings.toFixed(2)}</td>
+                          <td className='table__body__field'>{v.total.toFixed(2)}</td>
+                        </tr>
+                      )
+                    })
+                  }
+                </tbody>
+              </table>
+            </div> :
             null
           }
         </main>

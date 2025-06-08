@@ -1,0 +1,25 @@
+.input {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.input__element {
+  min-width: 12em;
+  padding: 0.8em 0.5em;
+  border-radius: var(--rounded-md);
+  background-color: var(--background);
+  border: 1px solid var(--on-background);
+  box-shadow: var(--shadow-md);
+  transition: all 100ms cubic-bezier(0.23, 1, 0.320, 1);
+  color: var(--text);
+}
+
+.input__element:focus {
+  outline: 2px solid var(--on-text);
+}
+
+.input__label {
+  margin: 0.4em 0em;
+  text-transform: capitalize;
+  font-weight: var(--font-bold);
+}

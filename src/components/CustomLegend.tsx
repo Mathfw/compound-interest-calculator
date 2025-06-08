@@ -12,9 +12,9 @@ export const CustomLegend: React.FC<LegendProps> = ({ payload }) => {
       {
         payload?.map((v, i) => {
           if (v.value === 'gross') {
-            return <li className='legend__item' key={i}>{t('earnings')}</li>
+            return <li className='legend__item' key={i} style={{ color: v.color }}>{t('earnings')}</li>
           } else if (v.value === 'invested') {
-            return <li className='legend__item' key={i}>{t('invested')}</li>
+            return <li className='legend__item' key={i} style={{ color: v.color }}>{t('invested')}</li>
           }
         })
       }
