@@ -7,15 +7,17 @@ import { useTranslation } from 'react-i18next'
 import Input from './components/Input'
 import { CustomLegend } from './components/CustomLegend';
 import { CustomTooltip } from './components/CustomTooltip';
+import Select from './components/Select';
 
 import { LangContext } from './contexts/LangContext';
 import { ThemeContext } from './contexts/ThemeContext';
 
-import FlagUS from './assets/flag-US.svg?react'
-import FlagBR from './assets/flag-BR.svg?react'
-import Moon from './assets/moon.svg?react'
-import Sun from './assets/sun.svg?react'
-import Select from './components/Select';
+import FlagUS from './assets/flag-US.svg?react';
+import FlagBR from './assets/flag-BR.svg?react';
+import Moon from './assets/moon.svg?react';
+import Sun from './assets/sun.svg?react';
+import Whatsapp from './assets/whatsapp.svg?react';
+import Email from './assets/email.svg?react';
 
 function App(): React.ReactNode {
 
@@ -208,6 +210,21 @@ function App(): React.ReactNode {
             null
           }
         </main>
+        <footer className={`footer ${theme}`}>
+          <div className='contact'>
+            <span className='contact__icon'>
+              <Whatsapp />
+            </span>
+            <a className='contact__link' href="https://wa.me/5516997212504">(16) 99721-2504</a>
+          </div>
+          <div className='contact'>
+            <span className='contact__icon'>
+              <Email />
+            </span>
+            <a className='contact__link' href="mailto:contato@mjbferreira.com">contato@mjbeferreira.com</a>
+          </div>
+          <p>&copy; {new Date().getFullYear()} matheus josé bento ferreira. Todos os direitos reservados.</p>
+        </footer>
       </ThemeContext>
     </LangContext>
   )

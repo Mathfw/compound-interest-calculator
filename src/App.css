@@ -18,6 +18,7 @@
   justify-content: space-between;
   gap: 2.5em;
   width: 100%;
+  max-height: 6em;
   box-sizing: border-box;
   padding: 1em;
   border-bottom: 1px solid var(--on-background);
@@ -52,9 +53,9 @@
 }
 
 .button--icon {
-  width: 4em;
-  height: 4em;
-  padding: 0.6em;
+  width: 3em;
+  height: 3em;
+  padding: 0.4em;
 }
 
 .button--outlined {
@@ -95,7 +96,6 @@
 .form__field {
   display: flex;
   align-items: flex-end;
-  justify-content: space-between;
 }
 
 .form__field__separator {
@@ -140,4 +140,40 @@
 
 .table__body__field {
   text-align: center;
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 5em;
+}
+
+.contact {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+}
+
+.contact__icon {
+  width: 32px;
+  height: 32px;
+  color: var(--primary);
+}
+
+.contact__link {
+  cursor: pointer;
+  color: var(--text);
+  text-decoration: none;
+}
+.contact__link:hover {
+  color: var(--primary);
+}
+
+@media (width >= 800px) {
+  .container {
+    padding-left: 25%;
+    padding-right: 25%;
+  }
 }

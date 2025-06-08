@@ -43,7 +43,7 @@
   --font-bold: 700;
 
   --text-md: 1rem;
-  --text-lg: 1.4em
+  --text-lg: 1.4em;
 
   color: var(--text);
   background: var(--background);

@@ -1,10 +1,14 @@
 .input {
+  box-sizing: border-box;
+  padding: 0 1em;
+  flex: 1;
   display: flex;
   flex-direction: column-reverse;
 }
 
 .input__element {
   min-width: 12em;
+  width: 100%;
   padding: 0.8em 0.5em;
   border-radius: var(--rounded-md);
   background-color: var(--background);
